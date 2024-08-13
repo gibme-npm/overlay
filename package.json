@@ -1,0 +1,73 @@
+{
+  "name": "@gibme/overlay",
+  "version": "0.9.1",
+  "description": "A simple Loading Overlay",
+  "main": "./dist/index.js",
+  "types": "./dist/index.ts",
+  "files": [
+    "dist/*"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn build:typescript",
+    "build:docs": "./node_modules/.bin/typedoc",
+    "build:typescript": "./node_modules/.bin/tsc",
+    "build:webpack": "yarn build:webpacked",
+    "build:webpacked": "./node_modules/.bin/auto-pack",
+    "test": "yarn test:style && yarn test:typecheck",
+    "test:typecheck": "./node_modules/.bin/tsc --noEmit",
+    "test:style": "yarn style",
+    "style": "./node_modules/.bin/eslint src/**/*.ts",
+    "fix-style": "./node_modules/.bin/eslint --fix src/**/*.ts",
+    "fix:style": "yarn fix-style",
+    "prepublishOnly": "yarn build && yarn build:webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gibme-npm/overlay.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gibme-npm/overlay/issues"
+  },
+  "homepage": "https://gibme-npm.github.io/overlay/",
+  "engines": {
+    "node": ">=16"
+  },
+  "engineStrict": true,
+  "author": {
+    "name": "Brandon Lehmann",
+    "email": "brandonlehmann@gmail.com"
+  },
+  "webpack": {
+    "entry": {
+      "Overlay": "./src/index.ts"
+    },
+    "filename": "[name].min.js"
+  },
+  "devDependencies": {
+    "@gibme/auto-pack": "^0.4.3",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.8",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "dotenv": "^16.4.1",
+    "eslint": "^8.56.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.2",
+    "typedoc": "^0.25.7",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@gibme/fontawesome": "^0.9.0",
+    "@gibme/timer": "^1.0.12",
+    "@types/jquery": "^3.5.30",
+    "@types/uuid": "^10.0.0",
+    "jquery": "^3.7.1",
+    "uuid": "^10.0.0"
+  }
+}
