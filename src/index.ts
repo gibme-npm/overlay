@@ -157,6 +157,7 @@ export default abstract class Overlay {
             return overlay.hide();
         })().removeAttr('class')
             .addClass('d-flex w-100 h-100 position-absolute top-0 start-0 d-none')
+            .css('z-index', options.zIndex || Number.MAX_SAFE_INTEGER)
             .empty();
 
         // force a resize before the auto-resize
