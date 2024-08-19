@@ -21,8 +21,8 @@
 import $ from 'jquery';
 import * as Types from './types';
 import { Timer } from '@gibme/timer';
-import { FontAwesome } from '@gibme/fontawesome';
-import { v4 as uuid } from 'uuid';
+import { createIcon } from '@gibme/fontawesome';
+import { nanoid } from 'nanoid';
 
 export * from './types';
 
@@ -59,7 +59,7 @@ export default abstract class Overlay {
     ): JQuery {
         const parentId = this.get_or_set_element_id(parent);
 
-        const { overlayId } = this.instances.get(parentId) || { overlayId: uuid() };
+        const { overlayId } = this.instances.get(parentId) || { overlayId: nanoid() };
 
         if (action === 'text' && typeof options === 'string') {
             options = this.merge_options(parentId, overlayId,
@@ -121,7 +121,8 @@ export default abstract class Overlay {
     private static calculate_size (overlay: JQuery, resizeFactor: number = 1) {
         const height = overlay.height() || overlay.parent().height();
         if (!height) return '1em';
-        return `${Math.floor(height * resizeFactor)}px`;
+        const size = 2 * Math.round((height * resizeFactor) / 2);
+        return `${size}px`;
     }
 
     /**
@@ -160,9 +161,6 @@ export default abstract class Overlay {
             .css('z-index', options.zIndex || Number.MAX_SAFE_INTEGER)
             .empty();
 
-        // force a resize before the auto-resize
-        this.resize(parent, overlayId, options);
-
         if (options.background?.color) overlay.css('background-color', options.background.color);
         if (options.background?.className) overlay.addClass(options.background.className);
 
@@ -181,7 +179,7 @@ export default abstract class Overlay {
         for (const field of fields) {
             const element = $('<div>')
                 .attr('id', `${overlayId}-container-${field}`)
-                .addClass('m-3')
+                .addClass('m-4 text-center')
                 .hide()
                 .appendTo(container);
 
@@ -204,6 +202,9 @@ export default abstract class Overlay {
                     break;
             }
         }
+
+        // force a resize before the auto-resize
+        this.resize(parent, overlayId, options);
 
         const fade = typeof options.fade === 'object' && options.fade.out ? options.fade.out : false;
 
@@ -301,7 +302,6 @@ export default abstract class Overlay {
         $(`#${overlayId}-container-progress`, overlay)
             .removeClass('order-0 order-1 order-2 order-3 order-4 order-5')
             .addClass(`order-${order} progress w-75`)
-            .css('height', '25px')
             .attr('role', 'progressbar');
 
         const progress_bar = $(`#${overlayId}-container-progress-bar`, overlay);
@@ -508,8 +508,6 @@ export default abstract class Overlay {
         if (options.text.color) text.css('color', options.text.color);
         if (options.text.className) text.addClass(options.text.className);
 
-        text.css('font-size', this.calculate_size(overlay, options.text.resizeFactor));
-
         if (typeof options.text.message === 'undefined' || options.text.message.length === 0) {
             text.hide().empty();
         } else {
@@ -618,12 +616,11 @@ export default abstract class Overlay {
         } else {
             if (options.icon.name) {
                 icon.empty()
-                    .append(FontAwesome.createIcon(options.icon.name,
+                    .append($(createIcon(options.icon.name,
                         {
                             ...options.icon,
                             attributes: { ...options.icon.attributes || {}, id: `${overlayId}-container-icon-element` }
-                        })
-                        .css('font-size', this.calculate_size(overlay, options.icon.resizeFactor))
+                        }))
                     )
                     .show();
 
@@ -679,7 +676,7 @@ export default abstract class Overlay {
     private static get_or_set_element_id<T extends HTMLElement = HTMLElement> (
         element: JQuery<T>
     ): string {
-        const id = element.attr('id') || uuid();
+        const id = element.attr('id') || nanoid();
 
         element.attr('id', id);
 
