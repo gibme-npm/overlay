@@ -20,7 +20,6 @@
 
 import $ from 'jquery';
 import * as Types from './types';
-import { Timer } from '@gibme/timer';
 import { createIcon } from '@gibme/fontawesome';
 import { nanoid } from 'nanoid';
 
@@ -28,7 +27,6 @@ export * from './types';
 
 export default abstract class Overlay {
     private static instances = new Map<string, { overlayId: string, options: Partial<Types.OverlayOptions> }>();
-    private static resize_timers = new Map<string, Timer>();
 
     /**
      * Returns if the overlay is currently open for the specified element
@@ -90,6 +88,16 @@ export default abstract class Overlay {
             options = Types.mergeOptions(options as Partial<Types.OverlayOptions>);
             options = this.merge_options(parentId, overlayId, options as Partial<Types.OverlayOptions>);
 
+            const handle_resize = () => {
+                this.auto_resize(parent, overlayId, this.instances.get(parentId)?.options);
+            };
+
+            if (action === 'show') {
+                $(window).on('resize', handle_resize);
+            } else if (action === 'hide') {
+                $(window).off('resize', handle_resize);
+            }
+
             switch (action) {
                 case 'show':
                     return this.show(parent, overlayId, options);
@@ -139,27 +147,13 @@ export default abstract class Overlay {
         options: Partial<Types.OverlayOptions> = {}
     ): JQuery {
         if (this.isOpen(overlayId)) return parent;
-        const parentId = this.get_or_set_element_id(parent);
 
-        const overlay = (() => {
-            const overlay = $('<div>')
-                .attr('id', overlayId)
-                .hide()
-                .appendTo(parent);
-
-            const timer = this.resize_timers.get(overlayId) ||
-                new Timer(options.resizeInterval || 50, true);
-
-            timer.on('tick', () =>
-                this.auto_resize(parent, overlayId, this.instances.get(parentId)?.options));
-
-            this.resize_timers.set(overlayId, timer);
-
-            return overlay.hide();
-        })().removeAttr('class')
-            .addClass('d-flex w-100 h-100 position-absolute top-0 start-0 d-none')
+        const overlay = $(`<div id="${overlayId}">`)
+            .addClass('d-flex w-100 h-100 position-absolute top-0 start-0')
             .css('z-index', options.zIndex || Number.MAX_SAFE_INTEGER)
-            .empty();
+            .empty()
+            .hide()
+            .appendTo(parent);
 
         if (options.background?.color) overlay.css('background-color', options.background.color);
         if (options.background?.className) overlay.addClass(options.background.className);
@@ -207,8 +201,6 @@ export default abstract class Overlay {
         this.resize(parent, overlayId, options);
 
         const fade = typeof options.fade === 'object' && options.fade.out ? options.fade.out : false;
-
-        overlay.hide().removeClass('d-none');
 
         parent.addClass('overflow-hidden')
             .trigger('overlay.show');
@@ -261,7 +253,6 @@ export default abstract class Overlay {
                 .remove();
 
             this.instances.delete(parentId);
-            this.resize_timers.delete(overlayId);
 
             parent.removeClass('overflow-hidden')
                 .trigger('overlay.hidden');

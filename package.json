@@ -1,6 +1,6 @@
 {
   "name": "@gibme/overlay",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "A simple Loading Overlay",
   "main": "./dist/index.js",
   "types": "./dist/index.ts",
@@ -64,7 +64,6 @@
   },
   "dependencies": {
     "@gibme/fontawesome": "^0.10.0",
-    "@gibme/timer": "^1.0.12",
     "@types/jquery": "^3.5.30",
     "jquery": "^3.7.1",
     "nanoid": "^5.0.7"

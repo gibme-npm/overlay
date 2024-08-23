@@ -89,11 +89,6 @@
     dotenv "^16.4.5"
     winston "^3.13.1"
 
-"@gibme/timer@^1.0.12":
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/@gibme/timer/-/timer-1.0.12.tgz#b6b0737299a0fc690a797f381b77392911ddefe3"
-  integrity sha512-zYmq63RSbAihO1xfwmYkiXB8fZzlG+XcmGo+qv+KG1Cf/Vt0v8MEk5VCN+I+3mY4dzcIgvQFWucxdaCgvqASJg==
-
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.14.tgz#d78e481a039f7566ecc9660b4ea7fe6b1fec442b"
