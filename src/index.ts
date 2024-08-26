@@ -149,7 +149,7 @@ export default abstract class Overlay {
         if (this.isOpen(overlayId)) return parent;
 
         const overlay = $(`<div id="${overlayId}">`)
-            .addClass('d-flex w-100 h-100 position-absolute top-0 start-0')
+            .addClass('d-flex w-100 h-100 position-sticky top-0 bottom-0 start-0 end-0')
             .css('z-index', options.zIndex || Number.MAX_SAFE_INTEGER)
             .empty()
             .hide()
