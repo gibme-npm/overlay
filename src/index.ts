@@ -54,6 +54,15 @@ export abstract class Overlay {
     ): JQuery {
         const parentId = this.get_or_set_element_id(parent);
 
+        // todo: figure out how to handle this better instead of just rejecting it
+        if (!this.can_append_div(parent)) {
+            if (action === 'show') {
+                console.error('[Overlay]: #%s is not suitable for an overlay', parentId);
+            }
+
+            return parent;
+        }
+
         const { overlayId } = this.instances.get(parentId) || { overlayId: nanoid() };
 
         if (action === 'text' && typeof options === 'string') {
@@ -700,6 +709,23 @@ export abstract class Overlay {
         element.attr('id', id);
 
         return id;
+    }
+
+    /**
+     * Returns if a div can be appended to the specified element
+     * @param element
+     * @private
+     */
+    private static can_append_div<T extends HTMLElement = HTMLElement> (
+        element: JQuery<T>
+    ): boolean {
+        const voidElements = new Set([
+            'area', 'base', 'br', 'col', 'embed', 'hr', 'img',
+            'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'
+        ]);
+
+        const tag = element.prop('tagName').toLowerCase();
+        return !voidElements.has(tag);
     }
 }
 
