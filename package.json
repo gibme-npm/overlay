@@ -1,6 +1,6 @@
 {
   "name": "@gibme/overlay",
-  "version": "0.9.6",
+  "version": "1.0.0",
   "description": "A simple Loading Overlay",
   "main": "./dist/index.js",
   "types": "./dist/index.ts",
@@ -45,12 +45,12 @@
     "filename": "[name].min.js"
   },
   "devDependencies": {
-    "@gibme/auto-pack": "^0.4.6",
+    "@gibme/auto-pack": "^0.4.7",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.11.8",
+    "@types/node": "^22.15.17",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
-    "dotenv": "^16.4.1",
+    "dotenv": "^16.5.0",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
@@ -59,13 +59,13 @@
     "eslint-plugin-promise": "^6.1.1",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.25.7",
-    "typescript": "^5.3.3"
+    "typedoc": "^0.28.4",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@gibme/fontawesome": "^0.10.1",
+    "@gibme/fontawesome": "^1.0.0",
     "@types/jquery": "^3.5.32",
     "jquery": "^3.7.1",
-    "nanoid": "^5.0.9"
+    "nanoid": "^5.1.5"
   }
 }

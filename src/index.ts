@@ -1,4 +1,4 @@
-// Copyright (c) 2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2024-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,21 +19,18 @@
 // SOFTWARE.
 
 import $ from 'jquery';
-import * as Types from './types';
-import { createIcon } from '@gibme/fontawesome';
+import { createIcon, FontAwesome } from '@gibme/fontawesome';
 import { nanoid } from 'nanoid';
 
-export * from './types';
-
-export default abstract class Overlay {
-    private static instances = new Map<string, { overlayId: string, options: Partial<Types.OverlayOptions> }>();
+export abstract class Overlay {
+    private static instances = new Map<string, { overlayId: string, options: Partial<Overlay.Options> }>();
 
     /**
      * Returns if the overlay is currently open for the specified element
      *
      * @param parent
      */
-    public static isOpen (parent: JQuery | string): boolean {
+    public static isOpen (parent: JQuery | string = $(document.body)): boolean {
         if (typeof parent === 'string') {
             return $(`#${parent}`).length !== 0;
         } else {
@@ -52,8 +49,8 @@ export default abstract class Overlay {
      */
     public static handle (
         parent: JQuery,
-        action: Types.Action,
-        options: Types.Options = {}
+        action: Overlay.Action,
+        options: Overlay.OptionsLike = {}
     ): JQuery {
         const parentId = this.get_or_set_element_id(parent);
 
@@ -76,17 +73,17 @@ export default abstract class Overlay {
             return this.text(parent, overlayId, options);
         } else if (action === 'icon' && typeof options === 'object') {
             options = this.merge_options(parentId, overlayId,
-                { icon: options as Partial<Types.FontAwesomeOptions> });
+                { icon: options as Partial<Overlay.Icon.Options> });
 
             return this.icon(parent, overlayId, options);
         } else if (action === 'image' && typeof options === 'object') {
             options = this.merge_options(parentId, overlayId,
-                { image: options as Partial<Types.ImageOptions> });
+                { image: options as Partial<Overlay.Image.Options> });
 
             return this.image(parent, overlayId, options);
         } else {
-            options = Types.mergeOptions(options as Partial<Types.OverlayOptions>);
-            options = this.merge_options(parentId, overlayId, options as Partial<Types.OverlayOptions>);
+            options = this._merge_options(options as Partial<Overlay.Options>);
+            options = this.merge_options(parentId, overlayId, options as Partial<Overlay.Options>);
 
             const handle_resize = () => {
                 this.auto_resize(parent, overlayId, this.instances.get(parentId)?.options);
@@ -144,12 +141,14 @@ export default abstract class Overlay {
     private static show (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (this.isOpen(overlayId)) return parent;
 
+        const position = parent.parent()[0].tagName === 'HTML' ? 'position-fixed' : 'position-absolute';
+
         const overlay = $(`<div id="${overlayId}">`)
-            .addClass('d-flex w-100 h-100 position-sticky top-0 bottom-0 start-0 end-0')
+            .addClass(`d-flex w-100 h-100 ${position} top-0 bottom-0 start-0 end-0`)
             .css('z-index', options.zIndex || Number.MAX_SAFE_INTEGER)
             .empty()
             .hide()
@@ -159,7 +158,7 @@ export default abstract class Overlay {
         if (options.background?.className) overlay.addClass(options.background.className);
 
         $('<div>')
-            .addClass('d-flex flex-grow-1')
+            .addClass('d-flex flex-fill')
             .attr('id', `${overlayId}-flex`)
             .append($('<div>')
                 .attr('id', `${overlayId}-container`)
@@ -236,7 +235,7 @@ export default abstract class Overlay {
     private static hide (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (!this.isOpen(overlayId)) return parent;
         const parentId = this.get_or_set_element_id(parent);
@@ -280,7 +279,7 @@ export default abstract class Overlay {
     private static progress (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (!this.isOpen(overlayId)) return parent;
 
@@ -338,7 +337,7 @@ export default abstract class Overlay {
     private static resize_text (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ) {
         const overlay = $(`#${overlayId}`, parent);
 
@@ -357,7 +356,7 @@ export default abstract class Overlay {
     private static resize_icon (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ) {
         const overlay = $(`#${overlayId}`, parent);
 
@@ -376,7 +375,7 @@ export default abstract class Overlay {
     private static resize_image (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ) {
         const overlay = $(`#${overlayId}`, parent);
 
@@ -398,7 +397,7 @@ export default abstract class Overlay {
     private static resize_progress (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ) {
         const overlay = $(`#${overlayId}`, parent);
 
@@ -417,7 +416,7 @@ export default abstract class Overlay {
     private static resize (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (!this.isOpen(overlayId)) return parent;
 
@@ -445,7 +444,7 @@ export default abstract class Overlay {
     private static auto_resize (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (!this.isOpen(overlayId)) return parent;
 
@@ -481,7 +480,7 @@ export default abstract class Overlay {
     private static text (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (!this.isOpen(overlayId)) return parent;
 
@@ -525,7 +524,7 @@ export default abstract class Overlay {
     private static image (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (!this.isOpen(overlayId)) return parent;
 
@@ -585,7 +584,7 @@ export default abstract class Overlay {
     private static icon (
         parent: JQuery,
         overlayId: string,
-        options: Partial<Types.OverlayOptions> = {}
+        options: Partial<Overlay.Options> = {}
     ): JQuery {
         if (!this.isOpen(overlayId)) return parent;
 
@@ -647,15 +646,44 @@ export default abstract class Overlay {
     private static merge_options (
         parent_path: string,
         overlayId: string,
-        new_options: Partial<Types.OverlayOptions>
-    ): Partial<Types.OverlayOptions> {
+        new_options: Partial<Overlay.Options>
+    ): Partial<Overlay.Options> {
         const { options: _options } = this.instances.get(parent_path) || { options: new_options };
 
-        const options = Types.mergeOptions(new_options, _options);
+        const options = this._merge_options(new_options, _options);
 
         this.instances.set(parent_path, { overlayId, options });
 
         return options;
+    }
+
+    /**
+     * Performs a deep merge of the options supplied with the default options
+     * @param target
+     * @param source
+     * @private
+     */
+    private static _merge_options (
+        target: Partial<Overlay.Options> = {},
+        source: Partial<Overlay.Options> = Overlay.DefaultOptions
+    ): Partial<Overlay.Options> {
+        const deep_merge = <Type = any, SourceType = any>(obj1: SourceType, obj2: SourceType): Type => {
+            const result = { ...obj1 };
+
+            for (const key in obj2) {
+                if (Object.prototype.hasOwnProperty.call(obj2, key)) {
+                    if (obj2[key] instanceof Object && obj1[key] instanceof Object) {
+                        result[key] = deep_merge(obj1[key], obj2[key]);
+                    } else {
+                        result[key] = obj2[key];
+                    }
+                }
+            }
+
+            return result as any;
+        };
+
+        return deep_merge<Overlay.Options>(source, target);
     }
 
     /**
@@ -675,4 +703,127 @@ export default abstract class Overlay {
     }
 }
 
-export { Overlay };
+export namespace Overlay {
+    export type Action = 'show' | 'hide' | 'progress' | 'resize' | 'text' | 'icon' | 'image';
+
+    export type AutoResize = {
+        autoResize: boolean;
+        resizeFactor: number;
+    }
+
+    export type HasOrder = {
+        order: number;
+    }
+
+    export type BaseOptions = {
+        className: string;
+        color: FontAwesome.Color;
+    }
+
+    export type CanHide = {
+        hide: boolean;
+    }
+
+    export namespace Background {
+        export type Options = BaseOptions;
+    }
+
+    export namespace Image {
+        export type Options = Partial<BaseOptions> & Partial<AutoResize> & Partial<CanHide> & Partial<HasOrder> & {
+            source: string;
+            animation?: FontAwesome.Animation;
+            rotation?: FontAwesome.Rotation;
+            width?: number;
+            height?: number;
+        }
+    }
+
+    export namespace Icon {
+        export type Options = Partial<FontAwesome.Icon.Options> & Partial<AutoResize> & Partial<CanHide> & HasOrder & {
+            name: string | string[];
+        }
+    }
+
+    export namespace Text {
+        export type Options = Partial<BaseOptions> & Partial<AutoResize> & Partial<HasOrder> & {
+            message: string | JQuery;
+        }
+    }
+
+    export namespace Progress {
+        export type Options = Partial<BaseOptions> & Partial<AutoResize> & Partial<HasOrder> & {
+            value: number;
+            min: number;
+            max: number;
+            animated: boolean;
+        }
+    }
+
+    export type Options = {
+        background: Partial<Background.Options>;
+        icon: Partial<Icon.Options>;
+        image: Partial<Image.Options>;
+        text: Partial<Text.Options>;
+        progress: Partial<Progress.Options>;
+        resizeInterval: number;
+        fade: { in?: number | boolean, out?: number | boolean };
+        zIndex: number;
+        timeout?: number;
+    }
+
+    export type OptionsLike = Partial<Options> | Partial<Icon.Options> | JQuery | string | number;
+
+    export const DefaultOptions: Readonly<Overlay.Options> = {
+        background: {
+            color: 'rgba(255, 255, 255, 0.8)'
+        },
+        icon: {
+            name: 'spinner',
+            style: 'solid',
+            animation: 'spin-pulse',
+            color: '#202020',
+            resizeFactor: 0.15,
+            autoResize: true,
+            order: 2
+        },
+        image: {
+            source: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+                    <circle r="80" cx="500" cy="90"/>
+                    <circle r="80" cx="500" cy="910"/>
+                    <circle r="80" cx="90" cy="500"/>
+                    <circle r="80" cx="910" cy="500"/>
+                    <circle r="80" cx="212" cy="212"/>
+                    <circle r="80" cx="788" cy="212"/>
+                    <circle r="80" cx="212" cy="788"/>
+                    <circle r="80" cx="788" cy="788"/></svg>`,
+            animation: 'spin',
+            autoResize: true,
+            resizeFactor: 0.15,
+            width: 200,
+            height: 200,
+            color: '#202020',
+            hide: true,
+            order: 3
+        },
+        text: {
+            autoResize: true,
+            resizeFactor: 0.075,
+            color: '#202020',
+            order: 1
+        },
+        progress: {
+            autoResize: true,
+            resizeFactor: 0.025,
+            color: '#a0a0a0',
+            min: 0,
+            max: 100,
+            animated: true,
+            order: 4
+        },
+        fade: { in: 400, out: 200 },
+        resizeInterval: 50,
+        zIndex: 2147483647
+    };
+}
+
+export default Overlay;
