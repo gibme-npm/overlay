@@ -1,6 +1,6 @@
 {
   "name": "@gibme/overlay",
-  "version": "1.0.1",
+  "version": "20.0.0",
   "description": "A simple Loading Overlay",
   "main": "./dist/index.js",
   "types": "./dist/index.ts",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://gibme-npm.github.io/overlay/",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "engineStrict": true,
   "author": {
@@ -45,26 +45,26 @@
     "filename": "[name].min.js"
   },
   "devDependencies": {
-    "@gibme/auto-pack": "^0.4.7",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "^22.15.17",
+    "@gibme/auto-pack": "^20.0.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.3.0",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
-    "dotenv": "^16.5.0",
+    "dotenv": "^17.2.1",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "mocha": "^10.2.0",
+    "mocha": "^11.7.1",
     "ts-node": "^10.9.2",
     "typedoc": "^0.28.4",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@gibme/fontawesome": "^1.0.0",
-    "@types/jquery": "^3.5.32",
+    "@gibme/fontawesome": "^20.0.0",
+    "@types/jquery": "^3.5.33",
     "jquery": "^3.7.1",
     "nanoid": "^5.1.5"
   }
