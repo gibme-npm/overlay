@@ -13,7 +13,8 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["node", "jquery"]
   },
   "include": [
     "src/**/*.ts",
