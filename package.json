@@ -1,6 +1,6 @@
 {
   "name": "@gibme/overlay",
-  "version": "20.0.2",
+  "version": "22.0.0",
   "description": "A simple Loading Overlay",
   "main": "./dist/index.js",
   "types": "./dist/index.ts",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://gibme-npm.github.io/overlay/",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "engineStrict": true,
   "author": {
@@ -45,30 +45,27 @@
     "filename": "[name].min.js"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.1",
-    "@gibme/auto-pack": "^20.0.4",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^24.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
-    "dotenv": "^17.2.1",
-    "eslint": "^9.39.1",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "@gibme/auto-pack": "^22.0.0",
+    "@types/node": "^25.5.2",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "dotenv": "^17.4.0",
+    "eslint": "^10.1.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^17.23.1",
+    "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^7.2.1",
-    "globals": "^16.5.0",
-    "mocha": "^11.7.5",
-    "ts-node": "^10.9.2",
-    "typedoc": "^0.28.15",
-    "typescript": "^5.9.3"
+    "globals": "^17.4.0",
+    "typedoc": "^0.28.18",
+    "typescript": "^6.0.2"
   },
   "dependencies": {
-    "@gibme/fontawesome": "^20.0.2",
-    "@types/jquery": "^3.5.33",
-    "jquery": "^3.7.1",
-    "nanoid": "^5.1.6"
+    "@gibme/fontawesome": "^22.0.0",
+    "@types/jquery": "^4.0.0",
+    "jquery": "^4.0.0",
+    "nanoid": "^5.1.7"
   }
 }
